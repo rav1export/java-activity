@@ -1,12 +1,39 @@
 package com._export_test.TestOnly.service;
 
-import com._export_test.TestOnly.modal.User;
-import java.util.List;
+import com._export_test.TestOnly.models.User;
+import com._export_test.TestOnly.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface UserService {
-    List<User> getAllUsers();
-    User getUserById(Long id);
-    User createUser(User user);
-    User updateUser(Long id, User user);
-    void deleteUser(Long id);
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User updateUser(Long id, User userDetails) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setName(userDetails.getName());
+        user.setEmail(userDetails.getEmail());
+        return userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
 }
